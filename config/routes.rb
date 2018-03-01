@@ -3,6 +3,9 @@ Rails.application.routes.draw do
   get 'login/index'
   post 'login/login'
 
+  get 'welcome/index'
+  root 'welcome#index'
+
   resources :hotels
   resources :users
 

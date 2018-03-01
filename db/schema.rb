@@ -30,7 +30,7 @@ ActiveRecord::Schema.define(version: 20180301182514) do
     t.integer "views_count"
   end
 
-  create_table "hotels_users", id: false, force: :cascade do |t|
+  create_table "managers", id: false, force: :cascade do |t|
     t.integer "user_id",  null: false
     t.integer "hotel_id", null: false
   end

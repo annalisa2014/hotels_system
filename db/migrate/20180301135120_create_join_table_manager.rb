@@ -1,4 +1,4 @@
-class CreateJoinTableUserHotel < ActiveRecord::Migration
+class CreateJoinTableManager < ActiveRecord::Migration
   def change
     create_join_table :users, :hotels do |t|
       # t.index [:user_id, :hotel_id]

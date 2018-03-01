@@ -5,6 +5,7 @@ class HotelsController < ApplicationController
   end
 
   def show
+    HotelViewsCountJob.perform_later(params[:id])
     @hotel = Hotel.find(params[:id])
     render :json => @hotel, status: 200
   end

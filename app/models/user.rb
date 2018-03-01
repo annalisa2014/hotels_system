@@ -7,6 +7,8 @@ class User < ActiveRecord::Base
   validates :password, presence: true
   validates :language, presence: true
 
+  has_many :hotels, through: :hotel_user
+
   def crypt_password(pwd)
     self.salt = SecureRandom.base64(8)
     self.password = Digest::SHA2.hexdigest(self.salt + pwd)

@@ -1,0 +1,26 @@
+<h1>Listing hotels</h1>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Description</th>
+    <th>Country code</th>
+    <th>Average price</th>
+
+  </tr>
+
+  <% @hotels.each do |hotel| %>
+    <tr>
+      <td><%= hotel.name %></td>
+      <td><%= hotel.description %></td>
+      <td><%= hotel.country_code %></td>
+      <td><%= hotel.average_price %></td>
+      <td><%= link_to 'Show', hotel_path(hotel) %></td>
+      <td><%= link_to 'Edit', edit_hotel_path(hotel) %></td>
+      <td><%= link_to 'Destroy', hotel_path(hotel),
+                      method: :delete,
+                      data: { confirm: 'Are you sure?' } %></td>
+    </tr>
+    </tr>
+  <% end %>
+</table>

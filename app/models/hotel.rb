@@ -3,7 +3,8 @@ class Hotel < ActiveRecord::Base
   validates :country_code, presence: true
   validates :average_price, presence: true
 
-  has_many :users, through: :hotel_user
+  has_many :managers
+  has_many :users, through: :managers
 
   def description
 

@@ -1,0 +1,13 @@
+<h1>Login</h1>
+
+<%= form_tag("login", method: "post") do |form|%>
+  <p>
+    <label>Email</label>
+    <input name="email" type="text" />
+  </p>
+  <p>
+    <label>Password</label>
+    <input name="password" type="password" />
+  </p>
+  <input name="login" type="submit" value="Login" />
+<% end %>

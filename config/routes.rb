@@ -1,4 +1,8 @@
 Rails.application.routes.draw do
+
+  get 'login/index'
+  post 'login/login'
+
   resources :hotels
   resources :users
 

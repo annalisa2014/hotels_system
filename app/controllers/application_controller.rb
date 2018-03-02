@@ -18,4 +18,20 @@ class ApplicationController < ActionController::Base
     self.headers['WWW-Authenticate'] = 'Token realm="Application"'
     render :json => 'Bad credentials', status: 401
   end
+
+  def extract_locale_from_accept_language_header
+    request.env['HTTP_ACCEPT_LANGUAGE'].scan(/^[a-z]{2}/).first
+  end
+
+  def header_language_to_currency
+    header_lang = extract_locale_from_accept_language_header
+    case header_lang
+      when 'es'
+        'USD'
+      when 'en'
+        'GBP'
+      else
+        'EUR'
+    end
+  end
 end

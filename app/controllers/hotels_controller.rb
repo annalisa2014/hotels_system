@@ -1,15 +1,20 @@
 class HotelsController < ApplicationController
-  before_action :authenticate
+  #before_action :authenticate
 
   def index
     @hotels = Hotel.all
   end
 
   def show
-    render_forbidden unless is_user_hotel_manager?(params[:id])
-    HotelViewsCountJob.perform_later(params[:id])
-    @hotel = Hotel.find(params[:id])
-    render :json => @hotel, status: 200
+    #if is_user_hotel_manager?(params[:id])
+      HotelViewsCountJob.perform_later(params[:id])
+      @hotel = Hotel.find(params[:id])
+      currency = header_language_to_currency
+      @hotel.average_price = @hotel.to_currency(currency)
+      render :json => @hotel, status: 200
+    #else
+    #  render_forbidden
+    #end
   end
 
   def new
@@ -18,7 +23,9 @@ class HotelsController < ApplicationController
 
   def create
     @hotel = Hotel.new(hotel_params)
-
+    amount = params[:hotel][:average_price]
+    currency = header_language_to_currency
+    @hotel.average_price = @hotel.to_euro(amount, currency)
     if @hotel.save
       authenticate_with_http_token do |token, options|
         user = User.find_by(token: token)
@@ -75,5 +82,4 @@ class HotelsController < ApplicationController
       end
     end
   end
-
 end

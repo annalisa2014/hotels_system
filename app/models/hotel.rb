@@ -28,6 +28,11 @@ class Hotel < ActiveRecord::Base
     end
   end
 
+  def manage_view_counter
+    self.increment!(:views_count)
+  end
+
+  private
   def init_central_bank_data
     bank = EuCentralBank.new
     bank.update_rates #if bank.last_updated.blank? || bank.last_updated < 1.day.ago

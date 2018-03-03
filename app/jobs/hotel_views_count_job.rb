@@ -3,6 +3,6 @@ class HotelViewsCountJob < ActiveJob::Base
 
   def perform(args)
     hotel = Hotel.find(args)
-    hotel.increment!(:views_count)
+    hotel.manage_view_counter
   end
 end

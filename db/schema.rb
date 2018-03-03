@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180301182514) do
+ActiveRecord::Schema.define(version: 20180303113002) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -21,7 +21,7 @@ ActiveRecord::Schema.define(version: 20180301182514) do
     t.string  "country_code"
     t.text    "description"
     t.decimal "average_price"
-    t.integer "views_count"
+    t.integer "views_count",   default: 0
   end
 
   create_table "managers", force: :cascade do |t|

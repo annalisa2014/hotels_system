@@ -2,12 +2,11 @@ class UsersController < ApplicationController
   before_action :authenticate, except: [:new, :create]
 
   def index
-    @users = User.all
+    render :json => User.all, status: 200
   end
 
   def show
-    @user = User.find(params[:id])
-    render :json => @user, status: 200
+    render :json => User.find(params[:id]), status: 200
   end
 
   def new
@@ -16,12 +15,12 @@ class UsersController < ApplicationController
 
   def create
     @user = User.new(user_params)
-    @user.password = @user.crypt_password(params['user']['password'])
+    @user.password = @user.crypt_password(params['password'])
     if @user.save
       puts "Account Created Successfully"
-      render :json => @user, status: 200
+      render :json => @user.token, status: 200
     else
-      render 'new'
+      render :json => error_list(@user.errors), status: 403
     end
   end
 
@@ -33,21 +32,21 @@ class UsersController < ApplicationController
     @user = User.find(params[:id])
 
     if @user.update(user_params)
-      redirect_to @user
+      render :json => @user, status: 200
     else
-      render 'edit'
+      render :json => error_list(@user.errors), status: 403
     end
   end
 
   def destroy
     @user = User.find(params[:id])
+    msg = "Hotel #{@hotel.id}, #{@hotel.name} deleted"
     @user.destroy
-
-    redirect_to hotels_path
+    render :json => msg, status: 200
   end
 
   private
   def user_params
-    params.require(:user).permit(:first_name, :last_name, :email, :language)
+    params.permit(:first_name, :last_name, :email, :password, :language)
   end
 end

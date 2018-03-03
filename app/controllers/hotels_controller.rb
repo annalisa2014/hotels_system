@@ -1,20 +1,22 @@
 class HotelsController < ApplicationController
-  #before_action :authenticate
+  before_action :authenticate
 
   def index
-    @hotels = Hotel.all
+    user = nil
+    authenticate_with_http_token do |token, options|
+      user = User.find_by(token: token)
+    end
+    render :json => user.hotels, status: 200
   end
 
   def show
-    #if is_user_hotel_manager?(params[:id])
-      HotelViewsCountJob.perform_later(params[:id])
-      @hotel = Hotel.find(params[:id])
-      currency = header_language_to_currency
-      @hotel.average_price = @hotel.to_currency(currency)
-      render :json => @hotel, status: 200
-    #else
-    #  render_forbidden
-    #end
+    render_forbidden and return unless is_user_hotel_manager?(params[:id])
+
+    HotelViewsCountJob.perform_later(params[:id])
+    @hotel = Hotel.find(params[:id])
+    currency = header_language_to_currency
+    @hotel.average_price = @hotel.to_currency(currency)
+    render :json => @hotel, status: 200
   end
 
   def new
@@ -23,45 +25,51 @@ class HotelsController < ApplicationController
 
   def create
     @hotel = Hotel.new(hotel_params)
-    amount = params[:hotel][:average_price]
+    amount = params[:average_price]
     currency = header_language_to_currency
     @hotel.average_price = @hotel.to_euro(amount, currency)
     if @hotel.save
       authenticate_with_http_token do |token, options|
         user = User.find_by(token: token)
-        user.managers.create(hotel: @hotel)
+        user.hotels << @hotel
       end
-      redirect_to @hotel
+      render :json => @hotel, status: 200
     else
-      render 'new'
+      render :json => error_list(@hotel.errors), status: 400
     end
   end
 
   def edit
-    render_forbidden unless is_user_hotel_manager?(params[:id])
+    render_forbidden and return unless is_user_hotel_manager?(params[:id])
     @hotel = Hotel.find(params[:id])
   end
 
   def update
-    render_forbidden unless is_user_hotel_manager?(params[:id])
+    render_forbidden and return unless is_user_hotel_manager?(params[:id])
     @hotel = Hotel.find(params[:id])
     if @hotel.update(hotel_params)
-      redirect_to @hotel
+      render :json => @hotel, status: 200
     else
-      render 'edit'
+      render :json => error_list(@hotel.errors), status: 400
     end
   end
 
   def destroy
-    render_forbidden unless is_user_hotel_manager?(params[:id])
+    render_forbidden and return unless is_user_hotel_manager?(params[:id])
     @hotel = Hotel.find(params[:id])
+    msg = "Hotel #{@hotel.id}, #{@hotel.name} deleted"
     @hotel.destroy
-    redirect_to hotels_path
+    render :json => msg, status: 200
+  end
+
+  def header_lang
+    lang = extract_locale_from_accept_language_header
+    render :json => lang
   end
 
   private
   def hotel_params
-    params.require(:hotel).permit(:name, :description, :country_code, :average_price)
+    params.permit(:name, :description, :country_code, :average_price)
   end
 
   def render_forbidden
@@ -77,8 +85,7 @@ class HotelsController < ApplicationController
     authenticate_with_http_token do |token, options|
       user = User.find_by(token: token)
       if user.manager
-        submitted_hotel = Hotel.find(hotel)
-        user.hotels.include?(submitted_hotel)
+        user.hotels.exists?(hotel)
       end
     end
   end

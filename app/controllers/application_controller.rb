@@ -1,7 +1,7 @@
 class ApplicationController < ActionController::Base
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
-  protect_from_forgery with: :exception
+  protect_from_forgery unless: -> { request.format.json? }
   before_action :set_locale
 
   protected
@@ -21,7 +21,7 @@ class ApplicationController < ActionController::Base
   end
 
   def extract_locale_from_accept_language_header
-    request.env['HTTP_ACCEPT_LANGUAGE'].scan(/^[a-z]{2}/).first
+    request.env['HTTP_ACCEPT_LANGUAGE'].scan(/^[a-z]{2}/).first unless request.env['HTTP_ACCEPT_LANGUAGE'].nil?
   end
 
   def header_language_to_currency
@@ -38,5 +38,13 @@ class ApplicationController < ActionController::Base
 
   def set_locale
     I18n.locale = extract_locale_from_accept_language_header || I18n.default_locale
+  end
+
+  def error_list(errors)
+    if errors.any?
+      error_list = errors.full_messages
+    else
+      error_list = "Error while creating a new User. See logs for more details"
+    end
   end
 end

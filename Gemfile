@@ -37,6 +37,7 @@ gem 'eu_central_bank', '~> 1.2.0'
 # gem 'capistrano-rails', group: :development
 
 gem 'pg', '~> 0.18.4'
+gem 'rspec', '~> 3.5'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

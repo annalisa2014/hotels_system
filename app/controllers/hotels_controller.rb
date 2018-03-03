@@ -14,7 +14,7 @@ class HotelsController < ApplicationController
 
     HotelViewsCountJob.perform_later(params[:id])
     @hotel = Hotel.find(params[:id])
-    currency = header_language_to_currency
+    currency = @hotel.header_language_to_currency extract_locale_from_accept_language_header
     @hotel.average_price = @hotel.to_currency(currency)
     render :json => @hotel, status: 200
   end
@@ -26,7 +26,7 @@ class HotelsController < ApplicationController
   def create
     @hotel = Hotel.new(hotel_params)
     amount = params[:average_price]
-    currency = header_language_to_currency
+    currency = @hotel.header_language_to_currency extract_locale_from_accept_language_header
     @hotel.average_price = @hotel.to_euro(amount, currency)
     if @hotel.save
       authenticate_with_http_token do |token, options|

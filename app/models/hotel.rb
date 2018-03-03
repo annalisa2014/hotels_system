@@ -32,6 +32,17 @@ class Hotel < ActiveRecord::Base
     self.increment!(:views_count)
   end
 
+  def header_language_to_currency(header_lang)
+    case header_lang
+      when 'es'
+        'USD'
+      when 'en'
+        'GBP'
+      else
+        'EUR'
+    end
+  end
+
   private
   def init_central_bank_data
     bank = EuCentralBank.new

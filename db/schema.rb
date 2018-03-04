@@ -16,12 +16,6 @@ ActiveRecord::Schema.define(version: 20180301182514) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "ar_internal_metadata", primary_key: "key", force: :cascade do |t|
-    t.string   "value"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "hotels", force: :cascade do |t|
     t.string  "name"
     t.string  "country_code"
@@ -30,10 +24,13 @@ ActiveRecord::Schema.define(version: 20180301182514) do
     t.integer "views_count"
   end
 
-  create_table "managers", id: false, force: :cascade do |t|
-    t.integer "user_id",  null: false
-    t.integer "hotel_id", null: false
+  create_table "managers", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "hotel_id"
   end
+
+  add_index "managers", ["hotel_id", "user_id"], name: "index_managers_on_hotel_id_and_user_id", using: :btree
+  add_index "managers", ["user_id", "hotel_id"], name: "index_managers_on_user_id_and_hotel_id", using: :btree
 
   create_table "users", force: :cascade do |t|
     t.string  "first_name"
@@ -43,7 +40,7 @@ ActiveRecord::Schema.define(version: 20180301182514) do
     t.string  "salt"
     t.string  "language"
     t.string  "token"
-    t.boolean "manager"
+    t.boolean "manager",    default: false
   end
 
 end

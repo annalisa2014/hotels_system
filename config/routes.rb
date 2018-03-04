@@ -6,7 +6,9 @@ Rails.application.routes.draw do
   get 'welcome/index'
   root 'welcome#index'
 
-  resources :hotels
+  resources :hotels do
+    get 'header_lang'
+  end
   resources :users
 
   # The priority is based upon order of creation: first created -> highest priority.

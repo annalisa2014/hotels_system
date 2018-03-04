@@ -15,7 +15,6 @@ class UsersController < ApplicationController
 
   def create
     @user = User.new(user_params)
-    @user.password = @user.crypt_password(params['password'])
     if @user.save
       puts "Account Created Successfully"
       render :json => @user.token, status: 200

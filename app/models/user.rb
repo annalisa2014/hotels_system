@@ -10,14 +10,19 @@ class User < ActiveRecord::Base
   has_many :managers
   has_many :hotels, through: :managers
 
+  def initialize(attributes = {})
+    super
+    self.email = attributes[:email]
+    self.first_name = attributes[:first_name]
+    self.last_name = attributes[:last_name]
+    self.language = attributes[:language]
+    self.salt = SecureRandom.base64(8)
+    self.password = Digest::SHA2.hexdigest(self.salt + attributes[:password])
+  end
+
   def add_managed_hotel(hotel)
     self.hotels << hotel
     self.manager = true
-  end
-
-  def crypt_password(pwd)
-    self.salt = SecureRandom.base64(8)
-    self.password = Digest::SHA2.hexdigest(self.salt + pwd)
   end
 
   def generate_token_if_loggedin(pwd)

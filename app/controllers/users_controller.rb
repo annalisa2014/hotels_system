@@ -40,7 +40,7 @@ class UsersController < ApplicationController
 
   def destroy
     @user = User.find(params[:id])
-    msg = "Hotel #{@hotel.id}, #{@hotel.name} deleted"
+    msg = "User #{@user.id}, #{@user.email} deleted"
     @user.destroy
     render :json => msg, status: 200
   end

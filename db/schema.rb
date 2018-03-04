@@ -11,15 +11,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180303113002) do
+ActiveRecord::Schema.define(version: 20180304231044) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
+  create_table "descriptions", force: :cascade do |t|
+    t.integer "hotel_id"
+    t.string  "lang"
+    t.text    "description"
+  end
+
+  add_index "descriptions", ["hotel_id"], name: "index_descriptions_on_hotel_id", using: :btree
+
   create_table "hotels", force: :cascade do |t|
     t.string  "name"
     t.string  "country_code"
-    t.text    "description"
     t.decimal "average_price"
     t.integer "views_count",   default: 0
   end

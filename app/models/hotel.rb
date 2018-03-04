@@ -5,8 +5,14 @@ class Hotel < ActiveRecord::Base
   validates :country_code, presence: true
   validates :average_price, presence: true
 
+  has_many :descriptions, foreign_key: "hotel_id"
   has_many :managers
   has_many :users, through: :managers
+
+  def tdescription(lang = 'it')
+    results = self.descriptions.where :lang => lang
+    results.first.description if results.size > 0
+  end
 
   def to_euro(amount, currency)
     init_central_bank_data

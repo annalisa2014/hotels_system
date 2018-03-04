@@ -11,12 +11,13 @@ class HotelsController < ApplicationController
 
   def show
     render_forbidden and return unless is_user_hotel_manager?(params[:id])
-
     HotelViewsCountJob.perform_later(params[:id])
     @hotel = Hotel.find(params[:id])
+    description = @hotel.tdescription extract_locale_from_accept_language_header
     currency = @hotel.header_language_to_currency extract_locale_from_accept_language_header
     @hotel.average_price = @hotel.to_currency(currency)
-    render :json => @hotel, status: 200
+    new_json = @hotel.as_json.merge!({ 'description' => description} )
+    render :json => new_json, status: 200
   end
 
   def new
@@ -26,8 +27,11 @@ class HotelsController < ApplicationController
   def create
     @hotel = Hotel.new(hotel_params)
     amount = params[:average_price]
-    currency = @hotel.header_language_to_currency extract_locale_from_accept_language_header
+    lang = extract_locale_from_accept_language_header
+    currency = @hotel.header_language_to_currency lang
     @hotel.average_price = @hotel.to_euro(amount, currency)
+    descr = Description.new(:lang => lang, :description => params[:description])
+    @hotel.descriptions << descr
     if @hotel.save
       authenticate_with_http_token do |token, options|
         user = User.find_by(token: token)
@@ -47,6 +51,9 @@ class HotelsController < ApplicationController
   def update
     render_forbidden and return unless is_user_hotel_manager?(params[:id])
     @hotel = Hotel.find(params[:id])
+    lang = extract_locale_from_accept_language_header
+    descr = Description.new(:lang => lang, :description => params[:description])
+    @hotel.descriptions << descr
     if @hotel.update(hotel_params)
       render :json => @hotel, status: 200
     else
@@ -69,7 +76,7 @@ class HotelsController < ApplicationController
 
   private
   def hotel_params
-    params.permit(:name, :description, :country_code, :average_price)
+    params.permit(:name, :country_code, :average_price)
   end
 
   def render_forbidden

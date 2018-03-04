@@ -17,6 +17,11 @@ describe UsersController do
       post :create, { first_name: "User", password: "password", language: "it"}, format: :json
       expect(response.body).to eql("[\"Last name can't be blank\",\"Email can't be blank\"]")
     end
+
+    it 'returns 400 if attempting to create user with already taken email' do
+      post :create, { first_name: "User", password: "password", language: "it", email: "m.rossi@gmail.com"}, format: :json
+      expect(response.status).to eql(403)
+    end
   end
 
   describe 'GET #index' do

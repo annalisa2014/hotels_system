@@ -28,7 +28,10 @@
   *Hotels:
     create: curl -X POST -H 'Accept-Language: it' -H "Authorization: Token token=340443ec7510499fa3db64ec548de799" -d "name=Grand Hotel&description=Hotel lussuoso vista mare&average_price=310.0&country_code=it" http://localhost:3000/hotels
     index: curl  -H 'Accept-Language: it' -H "Authorization: Token token=340443ec7510499fa3db64ec548de799" http://localhost:3000/hotels
-    show: curl  -H 'Accept-Language: it' -H "Authorization: Token token=340443ec7510499fa3db64ec548de799" http://localhost:3000/hotels/19
     update: curl -X PUT -H "Authorization: Token token=340443ec7510499fa3db64ec548de799" -d "name=Grand Hotel Viareggio" http://localhost:3000/hotels/19
+    update per introdurre una nuova description: curl -X PUT -H 'Accept-Language: en' -H "Authorization: Token token=340443ec7510499fa3db64ec548de799" -d "description=Awesome seaside hotel" http://localhost:3000/hotels/19
+    show: curl  -H 'Accept-Language: it' -H "Authorization: Token token=340443ec7510499fa3db64ec548de799" http://localhost:3000/hotels/19
+    show con description tradotta in italiano: curl -H 'Accept-Language: it' -H "Authorization: Token token=340443ec7510499fa3db64ec548de799"  http://localhost:3000/hotels/19
+    show con description tradotta in inglese: curl -H 'Accept-Language: en' -H "Authorization: Token token=340443ec7510499fa3db64ec548de799"  http://localhost:3000/hotels/19
     delete: curl -X DELETE -H "Authorization: Token token=340443ec7510499fa3db64ec548de799" http://localhost:3000/hotels/19
     api per language: curl -H 'Accept-Language: it' -H "Authorization: Token token=28731e398d2749e783caeae8e88c00f9" http://localhost:3000/hotels/19/header_lang

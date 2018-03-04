@@ -31,7 +31,7 @@ class HotelsController < ApplicationController
     if @hotel.save
       authenticate_with_http_token do |token, options|
         user = User.find_by(token: token)
-        user.hotels << @hotel
+        user.add_managed_hotel @hotel
       end
       render :json => @hotel, status: 200
     else
@@ -84,9 +84,7 @@ class HotelsController < ApplicationController
   def is_user_hotel_manager?(hotel)
     authenticate_with_http_token do |token, options|
       user = User.find_by(token: token)
-      if user.manager
-        user.hotels.exists?(hotel)
-      end
+      user.is_hotel_manager?(hotel)
     end
   end
 end
